@@ -1,13 +1,6 @@
-# eclipse
-bin
-*.launch
-.settings
-.metadata
-.classpath
-.project
-
 # idea
 out
+classes
 *.ipr
 *.iws
 *.iml
