@@ -39,8 +39,8 @@ public class Registry {
         );
     }
 
-    public void test(Entity player, World world) {
-        FMLNetworkHandler.openGui();
+    public void test(EntityPlayer player, World world) {
+        player.get
     }
 
     @SubscribeEvent
