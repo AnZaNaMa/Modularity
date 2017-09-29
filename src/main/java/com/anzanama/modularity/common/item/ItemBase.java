@@ -11,21 +11,10 @@ import net.minecraft.item.Item;
  * @version 9/28/2017
  */
 public class ItemBase extends Item {
-    protected String name;
 
     public ItemBase(String name) {
-        this.name = name;
-        setUnlocalizedName(name);
         setRegistryName(name);
+        setUnlocalizedName(name);
     }
 
-    public void registerItemModel() {
-        Registry.registerItemRenderer(this, 0, name);
-    }
-
-    @Override
-    public ItemBase setCreativeTab(CreativeTabs tab) {
-        super.setCreativeTab(tab);
-        return this;
-    }
 }
