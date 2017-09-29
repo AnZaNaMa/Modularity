@@ -1,6 +1,6 @@
 package com.anzanama.modularity.proxy;
 
-import com.anzanama.modularity.common.part.StructurePart;
+import com.anzanama.modularity.Registry;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
@@ -13,7 +13,7 @@ public class CommonProxy {
     }
 
     public void init(FMLInitializationEvent e) {
-        MinecraftForge.EVENT_BUS.register(new StructurePart());
+
     }
 
     public void postInit(FMLPostInitializationEvent e) {

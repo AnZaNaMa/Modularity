@@ -1,27 +1,29 @@
 package com.anzanama.modularity.common.part;
 
+import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 
-import java.util.ArrayList;
+import java.security.InvalidParameterException;
 import java.util.HashMap;
 
-public class StructurePart extends TileEntityBase implements IPartBase, ITickable {
+public class TilePartStructure extends TileEntityBase implements IPartBase, ITickable {
     private HashMap<EnumPlacement, IPart> parts;
     private HashMap<EnumFacing, IPartBase> adjacentParts;
+    private byte clock;
 
-    public StructurePart(HashMap<EnumPlacement, IPart> parts) {
+    public TilePartStructure(HashMap<EnumPlacement, IPart> parts) {
         super();
         this.parts = parts;
         findAdjacentParts();
+        clock = 0;
     }
 
-    public StructurePart() {
+    public TilePartStructure() {
         this(new HashMap<>());
     }
 
@@ -30,6 +32,10 @@ public class StructurePart extends TileEntityBase implements IPartBase, ITickabl
         for(EnumPlacement placement : parts.keySet()) {
             parts.get(placement).updatePart(this);
         }
+        if(clock%100==0) {
+            findAdjacentParts();
+        }
+        clock++;
     }
 
     @Override
@@ -73,22 +79,19 @@ public class StructurePart extends TileEntityBase implements IPartBase, ITickabl
 
     @Override
     public void readFromNBT(NBTTagCompound compound) {
-
+        super.readFromNBT(compound);
+        if(compound.hasKey("parts")) {
+            parts = partsFromBytes(compound.getByteArray("parts"));
+        } else {
+            parts = new HashMap<>();
+        }
     }
 
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
+        super.writeToNBT(compound);
         compound.setByteArray("parts", partsToBytes());
-        return null;
-    }
-
-    @SubscribeEvent
-    public void onPlayerLogin(PlayerEvent.PlayerLoggedInEvent event) {
-        if(!event.player.getEntityWorld().isRemote) {
-            event.player.capabilities.allowFlying = true;
-            event.player.capabilities.disableDamage = true;
-            event.player.sendPlayerAbilities();
-        }
+        return compound;
     }
 
     private byte[] partsToBytes() {
@@ -102,11 +105,12 @@ public class StructurePart extends TileEntityBase implements IPartBase, ITickabl
     private HashMap<EnumPlacement, IPart> partsFromBytes(byte[] bytes) {
         HashMap<EnumPlacement, IPart> newParts = new HashMap<>();
         if(bytes.length%8 != 0) {
-
+            throw new InvalidParameterException("Corrupted Byte Array Received!");
         }
         for(int i=0; i<(bytes.length/8); i++) {
-
+            IPart part = PartFactory.genFromBytes(bytes, i*8);
+            newParts.put(part.getPlacement(), part);
         }
-        return null;
+        return newParts;
     }
 }

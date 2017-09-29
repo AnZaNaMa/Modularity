@@ -1,0 +1,6 @@
+{
+  "parent": "time/generated",
+  "textures": {
+    "layer0": "modularity:items/wrench"
+  }
+}
